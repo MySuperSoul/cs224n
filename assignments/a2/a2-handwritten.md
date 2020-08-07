@@ -3,28 +3,32 @@
 (b):
 
 $$
-\frac{\partial J}{\partial v_c} = u_o - \sum_{x \in v}p(x | c)u_x = u_o - \sum_{x \in v} p(x|c)u_x = U(y-\hat{y})
+\frac{\partial J}{\partial v_c} = -u_o + \sum_{x \in v}p(x | c)u_x = -u_o + \sum_{x \in v} p(x|c)u_x = U^T(\hat{y}-y)
 $$
 
 (c):
 
 $$
-\frac{\partial J}{\partial u_w} = \frac{\partial}{\partial u_w} \log \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp (u_w^T v_c)} = \frac{\partial}{\partial u_w} u_o^Tv_c - \frac{\partial}{\partial u_w} \log \sum_{w \in V} \exp (u_w^T v_c)
+\frac{\partial J}{\partial u_w} = -\frac{\partial}{\partial u_w} \log \frac{\exp(u_o^T v_c)}{\sum_{w \in V} \exp (u_w^T v_c)} = -\frac{\partial}{\partial u_w} u_o^Tv_c + \frac{\partial}{\partial u_w} \log \sum_{w \in V} \exp (u_w^T v_c)
 $$
 
 Then we first calculate the later part, we give the annotation $l$ as the value of the later part, so we can deduct that:
 
 $$
-l = -\frac{1}{\sum_{w \in V} \exp (u_w^T v_c)} \cdot \frac{\partial}{\partial u_w} \exp(u_w^T v_c) = -\frac{\exp(u_w^T v_c)}{\sum_{w \in V} \exp (u_w^T v_c)} \cdot v_c = - \hat{y}\cdot v_c
+l = \frac{1}{\sum_{w \in V} \exp (u_w^T v_c)} \cdot \frac{\partial}{\partial u_w} \exp(u_w^T v_c) = \frac{\exp(u_w^T v_c)}{\sum_{w \in V} \exp (u_w^T v_c)} \cdot v_c = \hat{y_w}\cdot v_c
 $$
 
 So we can get the final solution:
 
 $$
 \frac{\partial J}{\partial u_w} = \left\{\begin{array}{cc}
-    (1 - \hat{y})\cdot v_c & \text{ if } w=o \\
-    -\hat{y}\cdot v_c & \text{ if } w\neq o
+    (\hat{y_w} - 1)\cdot v_c & \text{ if } w=o \\
+    \hat{y_w}\cdot v_c & \text{ if } w\neq o
 \end{array}\right.
+$$
+
+$$
+\frac{\partial J}{\partial U} = (\hat{y} - y)^T \cdot v_c
 $$
 
 (d):
