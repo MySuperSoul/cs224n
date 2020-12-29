@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 CS224N 2018-19: Homework 5
 nmt.py: NMT Model
@@ -15,6 +14,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 
 def pad_sents_char(sents, char_pad_token):
     """ Pad list of sentences according to the longest sentence in the batch and max_word_length.
@@ -41,7 +41,19 @@ def pad_sents_char(sents, char_pad_token):
     ###     You should NOT use the method `pad_sents()` below because of the way it handles
     ###     padding and unknown words.
 
-
+    pad_empty_word_token = [char_pad_token] * max_word_length
+    padded_char_sequences = [[
+        w[:max_word_length] if len(w) > max_word_length else w +
+        [char_pad_token] * (max_word_length - len(w)) for w in s
+    ] for s in sents]
+    max_sequence_len = max([len(s) for s in padded_char_sequences])
+    sents_padded = []
+    for s in padded_char_sequences:
+        added_words = []
+        for i in range(max_sequence_len - len(s)):
+            added_words.append(pad_empty_word_token)
+        s = s + added_words
+        sents_padded.append(s)
     ### END YOUR CODE
 
     return sents_padded
@@ -59,13 +71,17 @@ def pad_sents(sents, pad_token):
     """
     sents_padded = []
 
-    ### COPY OVER YOUR CODE FROM ASSIGNMENT 4
+    ### YOUR CODE HERE (~6 Lines)
 
+    max_length = max([len(sent) for sent in sents])
 
-    ### END YOUR CODE FROM ASSIGNMENT 4
+    for sent in sents:
+        sent = sent + [pad_token] * (max_length - len(sent))
+        sents_padded.append(sent)
+
+    ### END YOUR CODE
 
     return sents_padded
-
 
 
 def read_corpus(file_path, source):
@@ -98,7 +114,7 @@ def batch_iter(data, batch_size, shuffle=False):
         np.random.shuffle(index_array)
 
     for i in range(batch_num):
-        indices = index_array[i * batch_size: (i + 1) * batch_size]
+        indices = index_array[i * batch_size:(i + 1) * batch_size]
         examples = [data[idx] for idx in indices]
 
         examples = sorted(examples, key=lambda e: len(e[0]), reverse=True)
